@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"> <!-- Context is now .MainActivity -->
+    tools:context=".ui.home.HomeActivity">
 
     <!-- 1. Top App Bar (Toolbar + Tabs) -->
     <com.google.android.material.appbar.AppBarLayout
@@ -18,8 +18,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="My Itineraries"
-            app:menu="@menu/main_toolbar_menu" /> <!-- This adds your Sign Out button -->
+            app:title="My Itineraries" />
 
         <!-- Tab Layout ("Upcoming" / "Past (Memory Vault)") -->
         <com.google.android.material.tabs.TabLayout
@@ -47,6 +46,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <!-- List 1: Upcoming Trips -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/upcomingTripsList"
             android:layout_width="match_parent"
@@ -56,6 +56,7 @@
             android:visibility="visible"
             tools:listitem="@layout/item_trip_card" />
 
+        <!-- List 2: Past Trips (Memory Vault) -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pastTripsList"
             android:layout_width="match_parent"
@@ -81,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
-            app:menu="@menu/bottom_nav_menu" />
+            app:menu="@menu/bottom_nav_menu" /> <!-- This line now correctly points to your menu file -->
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <!-- 4. Floating Action Button (+) -->

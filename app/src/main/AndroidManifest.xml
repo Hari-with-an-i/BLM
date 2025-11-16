@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Blm" >
+        android:theme= "@style/Theme.Blm">
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -23,6 +23,9 @@
         </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
