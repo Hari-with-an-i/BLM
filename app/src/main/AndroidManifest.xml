@@ -24,7 +24,10 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
         <activity
-            android:name=".ui.home.HomeActivity"
+            android:name=".ui.create.CreateTripActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.details.TripDetailsActivity"
             android:exported="false" />
     </application>
 

@@ -2,73 +2,45 @@ package com.example.blm
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.blm.databinding.ActivityMainBinding // This now points to the new layout
+import com.example.blm.databinding.ActivityMainBinding
 import com.example.blm.model.Trip
 import com.example.blm.model.TripGroup
+import com.example.blm.ui.create.CreateTripActivity
 import com.example.blm.ui.home.PastTripsAdapter
 import com.example.blm.ui.home.UpcomingTripsAdapter
 import com.google.android.material.tabs.TabLayout
-import com.google.firebase.Firebase
+// --- NEW IMPORTS (NON-KTX) ---
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class MainActivity : AppCompatActivity() {
 
-    // This binding now correctly points to your new activity_main.xml
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore // This is the non-KTX class
 
-    // --- Dummy Data ---
-    // We will replace this with live Firestore data later
-    private val sampleGroups = listOf(
-        TripGroup("g1", "Family"),
-        TripGroup("g2", "College Crew")
-    )
-    private val sampleTrips = listOf(
-        Trip(
-            id = "1",
-            title = "Paris 2026",
-            date = "Sept 10-17, 2026",
-            isSolo = false,
-            group = sampleGroups[0]
-        ),
-        Trip(
-            id = "2",
-            title = "Solo Backpacking",
-            date = "Oct 2025",
-            isSolo = true,
-            group = null
-        )
-    )
-    private val sampleMemories = listOf(
-        Trip(
-            id = "m1",
-            title = "Japan 2024",
-            date = "May 5-20, 2024",
-            isSolo = false,
-            group = sampleGroups[1],
-            imageUrl = "url_to_image"
-        )
-    )
-    // --- End of Dummy Data ---
+    private lateinit var upcomingAdapter: UpcomingTripsAdapter
+    private lateinit var pastAdapter: PastTripsAdapter
+    private val upcomingTripsList = ArrayList<Trip>()
+    private val pastTripsList = ArrayList<Trip>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Firebase Auth
-        auth = Firebase.auth
+        // --- NEW INITIALIZATION (NON-KTX) ---
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
-        // Set the toolbar
         setSupportActionBar(binding.toolbar)
-
-        // Call our setup functions
         setupRecyclerAdapters()
         setupTabListener()
         setupBottomNavListener()
@@ -77,33 +49,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        // --- THIS IS YOUR PERFECT LOGIN CHECK ---
-        // Check if user is signed in (non-null)
         val currentUser = auth.currentUser
         if (currentUser == null) {
-            // No user is signed in, redirect to LoginActivity
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
-            finish() // Finish MainActivity so user can't go back
+            finish()
         } else {
-            // User is signed in!
-            // We don't need to do anything, just let them see the screen.
+            loadTripsFromFirestore()
         }
-        // --- END OF YOUR LOGIN CHECK ---
     }
 
-    // This function handles menu item clicks (like "Sign Out")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_sign_out -> {
-                // --- THIS IS YOUR SIGN OUT LOGIC ---
                 auth.signOut()
                 Toast.makeText(this, "Signed Out", Toast.LENGTH_SHORT).show()
-                // Redirect to LoginActivity
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
-                // --- END OF YOUR SIGN OUT LOGIC ---
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -111,16 +74,68 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerAdapters() {
-        val upcomingAdapter = UpcomingTripsAdapter(sampleTrips)
+
+        // --- THIS IS THE CHANGE ---
+        // We now pass in the click listener lambda
+        upcomingAdapter = UpcomingTripsAdapter(upcomingTripsList) { trip ->
+            // This is the code that runs when a trip is clicked
+            val intent = Intent(this, com.example.blm.ui.details.TripDetailsActivity::class.java)
+
+            // Pass the ID of the clicked trip to the new activity
+            intent.putExtra(com.example.blm.ui.details.TripDetailsActivity.EXTRA_TRIP_ID, trip.id)
+
+            startActivity(intent)
+        }
+
         binding.upcomingTripsList.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = upcomingAdapter
         }
-        val pastAdapter = PastTripsAdapter(sampleMemories)
+
+        // We should do the same for the PastTripsAdapter
+        pastAdapter = PastTripsAdapter(pastTripsList) { memory ->
+            // This is the code that runs when a memory is clicked
+            val intent = Intent(this, com.example.blm.ui.details.TripDetailsActivity::class.java)
+
+            // Pass the ID of the clicked memory
+            intent.putExtra(com.example.blm.ui.details.TripDetailsActivity.EXTRA_TRIP_ID, memory.id)
+
+            startActivity(intent)
+        }
         binding.pastTripsList.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = pastAdapter
         }
+    }
+
+    private fun loadTripsFromFirestore() {
+        val currentUserId = auth.currentUser?.uid
+        if (currentUserId == null) {
+            Log.e("MainActivity", "User not logged in, cannot load trips.")
+            return
+        }
+
+        db.collection("trips")
+            .whereArrayContains("members", currentUserId)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Log.w("MainActivity", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                upcomingTripsList.clear()
+                pastTripsList.clear()
+
+                for (doc in snapshots!!) {
+                    val trip = doc.toObject(Trip::class.java)
+                    // TODO: Add logic to sort into upcoming vs past
+                    upcomingTripsList.add(trip)
+                }
+
+                upcomingAdapter.notifyDataSetChanged()
+                pastAdapter.notifyDataSetChanged()
+            }
     }
 
     private fun setupTabListener() {
@@ -143,13 +158,13 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavView.selectedItemId = R.id.nav_trips
         binding.bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_trips -> true // We are here
+                R.id.nav_trips -> true
                 R.id.nav_groups -> {
-                    Toast.makeText(this, "Groups Clicked", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Groups Clicked (WIP)", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.nav_settings -> {
-                    Toast.makeText(this, "Settings Clicked", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Settings Clicked (WIP)", Toast.LENGTH_SHORT).show()
                     true
                 }
                 else -> false
@@ -159,7 +174,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFabListener() {
         binding.fab.setOnClickListener {
-            Toast.makeText(this, "Create Trip Clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, CreateTripActivity::class.java)
+            startActivity(intent)
         }
     }
 }

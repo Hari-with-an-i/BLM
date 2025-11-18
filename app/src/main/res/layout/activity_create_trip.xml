@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.create.CreateTripActivity">
+
+    <!-- 1. The Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="Create New Itinerary"
+        app:navigationIcon="@drawable/ic_close" /> <!-- We'll need to add 'ic_close' -->
+
+    <!-- 2. The Form (in a padded container) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Trip Title -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Trip Title (e.g., Paris 2026)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etTripTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Trip Date -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Date (e.g., Sept 10-17, 2026)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etTripDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Radio Buttons for Solo/Group -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Who is this trip for?"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupTripType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <RadioButton
+                android:id="@+id/radioSolo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Just me (Solo Trip)"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A Group"/>
+        </RadioGroup>
+
+        <!-- We'll add a 'Select Group' dropdown here later -->
+
+        <!-- Create Button -->
+        <Button
+            android:id="@+id/btnCreateTrip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Create Trip"
+            android:padding="12dp"/>
+    </LinearLayout>
+
+</LinearLayout>

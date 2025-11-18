@@ -9,9 +9,11 @@ import com.example.blm.R
 import com.example.blm.model.Trip
 
 class UpcomingTripsAdapter(
-    private val trips: List<Trip>
+    private val trips: List<Trip>,
+    private val onTripClick: (Trip) -> Unit // This is the new part
 ) : RecyclerView.Adapter<UpcomingTripsAdapter.ViewHolder>() {
 
+    // This ViewHolder class is unchanged.
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.tripTitle)
         val date: TextView = view.findViewById(R.id.tripDate)
@@ -26,18 +28,20 @@ class UpcomingTripsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val trip = trips[position]
-
         holder.title.text = trip.title
         holder.date.text = trip.date
 
         if (trip.isSolo) {
             holder.group.text = "Private (Solo Trip)"
         } else {
-            holder.group.text = trip.group?.name ?: "Group"
+            holder.group.text = "Group Trip"
         }
 
-        // TODO: Set an onClickListener to navigate to the trip details
-        // holder.itemView.setOnClickListener { ... }
+
+
+        holder.itemView.setOnClickListener {
+            onTripClick(trip)
+        }
     }
 
     override fun getItemCount() = trips.size
