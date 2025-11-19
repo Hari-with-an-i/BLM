@@ -8,7 +8,7 @@ import com.example.blm.databinding.ActivityTripDetailsBinding
 import com.example.blm.model.Trip
 import com.google.firebase.firestore.FirebaseFirestore
 import android.content.Intent
-
+import com.example.blm.ChecklistActivity
 
 class TripDetailsActivity : AppCompatActivity() {
 
@@ -65,7 +65,8 @@ class TripDetailsActivity : AppCompatActivity() {
         // Button 1: Checklist
         binding.btnChecklist.setOnClickListener {
             // TODO for Teammate 1: Launch ChecklistActivity here
-            Toast.makeText(this, "Checklist feature coming soon!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ChecklistActivity::class.java)
+            startActivity(intent)
         }
 
         // Button 2: Polls
@@ -77,12 +78,18 @@ class TripDetailsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
         // Button 3: Gallery
         binding.btnGallery.setOnClickListener {
-            // TODO for Teammate 3: Launch GalleryActivity here
-            Toast.makeText(this, "Gallery feature coming soon!", Toast.LENGTH_SHORT).show()
+            binding.btnGallery.setOnClickListener {
+                // Launch the GalleryActivity
+                val intent = android.content.Intent(this, com.example.blm.ui.gallery.GalleryActivity::class.java)
+                // CRITICAL: Pass the tripId so the gallery knows WHICH trip to load
+                intent.putExtra("EXTRA_TRIP_ID", tripId)
+                startActivity(intent)
+            }
         }
+
+
     }
 
     companion object {
