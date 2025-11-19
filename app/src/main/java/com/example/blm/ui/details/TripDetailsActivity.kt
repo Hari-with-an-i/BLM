@@ -77,9 +77,16 @@ class TripDetailsActivity : AppCompatActivity() {
 
         // Button 3: Gallery
         binding.btnGallery.setOnClickListener {
-            // TODO for Teammate 3: Launch GalleryActivity here
-            Toast.makeText(this, "Gallery feature coming soon!", Toast.LENGTH_SHORT).show()
+            binding.btnGallery.setOnClickListener {
+                // Launch the GalleryActivity
+                val intent = android.content.Intent(this, com.example.blm.ui.gallery.GalleryActivity::class.java)
+                // CRITICAL: Pass the tripId so the gallery knows WHICH trip to load
+                intent.putExtra("EXTRA_TRIP_ID", tripId)
+                startActivity(intent)
+            }
         }
+
+
     }
 
     companion object {

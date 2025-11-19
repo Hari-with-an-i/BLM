@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.blm.databinding.ActivityMainBinding
 import com.example.blm.model.Trip
-import com.example.blm.model.TripGroup
 import com.example.blm.ui.create.CreateTripActivity
 import com.example.blm.ui.home.PastTripsAdapter
 import com.example.blm.ui.home.UpcomingTripsAdapter

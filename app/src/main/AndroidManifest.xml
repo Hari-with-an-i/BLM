@@ -38,6 +38,9 @@
             android:name=".ui.details.TripDetailsActivity"
             android:exported="false" />
         <activity android:name=".ChecklistActivity" />
+        <activity
+            android:name=".ui.gallery.GalleryActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
