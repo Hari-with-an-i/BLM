@@ -2,4 +2,17 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!-- Material-like palette (you can change hex values) -->
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+
+    <!-- Common tokens you may want -->
+    <color name="colorPrimary">@color/purple_500</color>
+    <color name="colorPrimaryVariant">@color/purple_700</color>
+    <color name="colorSecondary">@color/teal_200</color>
+
+    <!-- surface/on colors -->
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorOnSurface">#000000</color>
 </resources>

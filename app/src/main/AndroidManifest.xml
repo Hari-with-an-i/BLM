@@ -29,6 +29,8 @@
         <activity
             android:name=".ui.details.TripDetailsActivity"
             android:exported="false" />
+        <activity android:name=".ui.polls.PollsActivity" />
+        <activity android:name=".ui.polls.PollCreateActivity" />
     </application>
 
 </manifest>
