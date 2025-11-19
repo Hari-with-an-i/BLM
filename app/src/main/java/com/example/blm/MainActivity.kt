@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseFirestore // This is the non-KTX class
+    private lateinit var db: FirebaseFirestore
 
     private lateinit var upcomingAdapter: UpcomingTripsAdapter
     private lateinit var pastAdapter: PastTripsAdapter
@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // --- NEW INITIALIZATION (NON-KTX) ---
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
@@ -64,7 +63,8 @@ class MainActivity : AppCompatActivity() {
             R.id.action_sign_out -> {
                 auth.signOut()
                 Toast.makeText(this, "Signed Out", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, LoginActivity::class.java)
+                val intent = Intent(this, LandingActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
                 finish()
                 true
