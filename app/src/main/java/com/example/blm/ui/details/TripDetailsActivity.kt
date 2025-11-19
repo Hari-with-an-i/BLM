@@ -7,6 +7,8 @@ import android.widget.Toast
 import com.example.blm.databinding.ActivityTripDetailsBinding
 import com.example.blm.model.Trip
 import com.google.firebase.firestore.FirebaseFirestore
+import android.content.Intent
+import com.example.blm.ChecklistActivity
 
 class TripDetailsActivity : AppCompatActivity() {
 
@@ -63,7 +65,8 @@ class TripDetailsActivity : AppCompatActivity() {
         // Button 1: Checklist
         binding.btnChecklist.setOnClickListener {
             // TODO for Teammate 1: Launch ChecklistActivity here
-            Toast.makeText(this, "Checklist feature coming soon!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ChecklistActivity::class.java)
+            startActivity(intent)
         }
 
         // Button 2: Polls
