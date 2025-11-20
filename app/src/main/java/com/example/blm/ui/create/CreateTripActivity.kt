@@ -1,11 +1,16 @@
 package com.example.blm.ui.create
 
 import android.os.Bundle
+import android.view.View
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.blm.R
 import com.example.blm.databinding.ActivityCreateTripBinding
 import com.example.blm.model.Trip
-// --- NEW IMPORTS (NON-KTX) ---
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -24,6 +29,18 @@ class CreateTripActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
+        binding.radioGroupTripType.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == R.id.radioGroup) {
+                binding.llCollaborators.visibility = View.VISIBLE
+            } else {
+                binding.llCollaborators.visibility = View.GONE
+            }
+        }
+
+        binding.btnAddCollaborator.setOnClickListener {
+            addCollaboratorField()
+        }
+
         binding.btnCreateTrip.setOnClickListener {
             saveTripToFirestore()
         }
@@ -31,6 +48,21 @@ class CreateTripActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    private fun addCollaboratorField() {
+        val textInputLayout = TextInputLayout(this)
+        textInputLayout.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        textInputLayout.hint = "Collaborator's Email"
+        textInputLayout.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE)
+
+        val etEmail = TextInputEditText(this)
+        etEmail.inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+        textInputLayout.addView(etEmail)
+        binding.llCollaborators.addView(textInputLayout, binding.llCollaborators.childCount - 1)
     }
 
     private fun saveTripToFirestore() {
@@ -48,20 +80,55 @@ class CreateTripActivity : AppCompatActivity() {
             return
         }
 
+        val memberIds = mutableListOf(currentUser.uid)
+        val collaboratorEmails = mutableListOf<String>()
+
+        if (!isSolo) {
+            for (i in 0 until binding.llCollaborators.childCount) {
+                val view = binding.llCollaborators.getChildAt(i)
+                if (view is TextInputLayout) {
+                    val editText = view.editText
+                    if (editText != null && editText.text.toString().isNotEmpty()) {
+                        collaboratorEmails.add(editText.text.toString())
+                    }
+                }
+            }
+        }
+
+        if (collaboratorEmails.isNotEmpty()) {
+            db.collection("users")
+                .whereIn("email", collaboratorEmails)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    for (document in querySnapshot.documents) {
+                        memberIds.add(document.id)
+                    }
+                    createTrip(title, date, isSolo, currentUser.uid, memberIds)
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Error finding collaborators: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            createTrip(title, date, isSolo, currentUser.uid, memberIds)
+        }
+    }
+
+    private fun createTrip(title: String, date: String, isSolo: Boolean, createdBy: String, members: List<String>) {
+        val tripsRef = db.collection("trips").document()
+        val newTripId = tripsRef.id
+
         val newTrip = Trip(
+            id = newTripId,
             title = title,
             date = date,
             isSolo = isSolo,
-            createdBy = currentUser.uid,
-            members = listOf(currentUser.uid)
+            createdBy = createdBy,
+            members = members
         )
 
-        db.collection("trips")
-            .add(newTrip)
-            .addOnSuccessListener { documentReference ->
+        tripsRef.set(newTrip)
+            .addOnSuccessListener {
                 Toast.makeText(this, "Trip Created!", Toast.LENGTH_SHORT).show()
-                val newTripId = documentReference.id
-                db.collection("trips").document(newTripId).update("id", newTripId)
                 finish()
             }
             .addOnFailureListener { e ->

@@ -8,6 +8,7 @@ import com.example.blm.databinding.ActivitySignUpBinding // Import your view bin
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -49,11 +50,29 @@ class SignUpActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign up success, navigate to Main activity
-                    Toast.makeText(baseContext, "Sign Up Successful.", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish() // Finish this activity so user can't go back
+                    // Sign up success, force token refresh and then create user document
+                    val user = auth.currentUser
+                    user?.getIdToken(true)?.addOnSuccessListener {
+                        val db = FirebaseFirestore.getInstance()
+                        val userMap = hashMapOf(
+                            "email" to email
+                        )
+                        db.collection("users").document(user.uid)
+                            .set(userMap)
+                            .addOnSuccessListener {
+                                Toast.makeText(baseContext, "Sign Up Successful.", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                                finish() // Finish this activity so user can't go back
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(
+                                    baseContext,
+                                    "Failed to create user document: ${e.message}",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                            }
+                    }
                 } else {
                     // If sign up fails, display a message to the user.
                     Toast.makeText(

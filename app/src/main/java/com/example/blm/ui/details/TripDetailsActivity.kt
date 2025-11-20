@@ -9,6 +9,11 @@ import com.example.blm.model.Trip
 import com.google.firebase.firestore.FirebaseFirestore
 import android.content.Intent
 import com.example.blm.ChecklistActivity
+import android.view.LayoutInflater
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import com.google.firebase.firestore.FieldValue
+import com.example.blm.R
 
 class TripDetailsActivity : AppCompatActivity() {
 
@@ -83,18 +88,72 @@ class TripDetailsActivity : AppCompatActivity() {
 
         // Button 3: Gallery
         binding.btnGallery.setOnClickListener {
-            binding.btnGallery.setOnClickListener {
-                // Launch the GalleryActivity
-                val intent = android.content.Intent(this, com.example.blm.ui.gallery.GalleryActivity::class.java)
-                // CRITICAL: Pass the tripId so the gallery knows WHICH trip to load
-                intent.putExtra("EXTRA_TRIP_ID", tripId)
-                startActivity(intent)
-            }
+            // Launch the GalleryActivity
+            val intent = android.content.Intent(this, com.example.blm.ui.gallery.GalleryActivity::class.java)
+            // CRITICAL: Pass the tripId so the gallery knows WHICH trip to load
+            intent.putExtra("EXTRA_TRIP_ID", tripId)
+            startActivity(intent)
         }
 
-
+        // Button 4: Share
+        binding.btnShare.setOnClickListener {
+            showShareDialog()
+        }
     }
 
+    private fun showShareDialog() {
+        val builder = AlertDialog.Builder(this)
+        val inflater = LayoutInflater.from(this)
+        val dialogView = inflater.inflate(R.layout.dialog_share_trip, null)
+        val etEmail = dialogView.findViewById<EditText>(R.id.etEmail)
+
+        builder.setView(dialogView)
+            .setPositiveButton("Share") { _, _ ->
+                val email = etEmail.text.toString().trim()
+                if (email.isNotEmpty()) {
+                    addCollaborator(email)
+                } else {
+                    Toast.makeText(this, "Please enter an email address", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }
+            .create()
+            .show()
+    }
+
+    private fun addCollaborator(email: String) {
+        // 1. Find the user by email
+        db.collection("users")
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    Toast.makeText(this, "User with this email not found", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
+
+                // 2. Get the user's ID
+                val user = querySnapshot.documents[0]
+                val userId = user.id
+
+                // 3. Add the user to the trip's members list
+                tripId?.let {
+                    db.collection("trips").document(it)
+                        .update("members", FieldValue.arrayUnion(userId))
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "User added to the trip", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Failed to add user: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to find user: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
     companion object {
         const val EXTRA_TRIP_ID = "EXTRA_TRIP_ID"
     }

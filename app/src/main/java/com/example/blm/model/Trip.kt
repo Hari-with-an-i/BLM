@@ -1,12 +1,14 @@
 package com.example.blm.model
 
+import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
 import java.util.Date
 
 // This is the new, correct version.
 // It has "createdBy", "members", "createdAt", and default null values.
 data class Trip(
-    var id: String? = null,
+    @DocumentId
+    val id: String = "",
     var title: String? = null,
     var date: String? = null,
     var createdBy: String? = null,
@@ -14,5 +16,5 @@ data class Trip(
     var isSolo: Boolean = true,
     var imageUrl: String? = null,
     @ServerTimestamp
-    var createdAt: Date? = null
+    val createdAt: Date? = null
 )
