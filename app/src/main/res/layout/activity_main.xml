@@ -18,79 +18,31 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="My Itineraries"
+            app:title="PackIt"
+            android:background="@color/orange"
             app:menu="@menu/main_toolbar_menu" /> <!-- This adds your Sign Out button -->
-
-        <!-- Tab Layout ("Upcoming" / "Past (Memory Vault)") -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Upcoming" />
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Past (Memory Vault)" />
-        </com.google.android.material.tabs.TabLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- 2. Main Content (The Lists) -->
-    <FrameLayout
-        android:id="@+id/list_container"
+    <!-- Main Content (The List) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tripsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_trip_card" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/upcomingTripsList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:clipToPadding="false"
-            android:visibility="visible"
-            tools:listitem="@layout/item_trip_card" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/pastTripsList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:clipToPadding="false"
-            android:visibility="gone"
-            tools:listitem="@layout/item_memory_card" />
-    </FrameLayout>
-
-    <!-- 3. Bottom App Bar -->
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="10dp">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:background="@android:color/transparent"
-            app:menu="@menu/bottom_nav_menu" />
-    </com.google.android.material.bottomappbar.BottomAppBar>
-
-    <!-- 4. Floating Action Button (+) -->
+    <!-- Floating Action Button (+) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
         android:contentDescription="Create New Itinerary"
-        app:layout_anchor="@id/bottomAppBar"
+        app:backgroundTint="@color/mint_green"
         app:srcCompat="@drawable/ic_add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

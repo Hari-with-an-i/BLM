@@ -13,6 +13,10 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import android.app.DatePickerDialog
+import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class CreateTripActivity : AppCompatActivity() {
 
@@ -41,6 +45,10 @@ class CreateTripActivity : AppCompatActivity() {
             addCollaboratorField()
         }
 
+        binding.etTripDate.setOnClickListener {
+            showDatePickerDialog()
+        }
+
         binding.btnCreateTrip.setOnClickListener {
             saveTripToFirestore()
         }
@@ -48,6 +56,27 @@ class CreateTripActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    private fun showDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(selectedYear, selectedMonth, selectedDay)
+                val dateFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+                binding.etTripDate.setText(dateFormat.format(selectedDate.time))
+            },
+            year,
+            month,
+            day
+        )
+        datePickerDialog.show()
     }
 
     private fun addCollaboratorField() {

@@ -15,4 +15,6 @@
     <!-- surface/on colors -->
     <color name="colorOnPrimary">#FFFFFF</color>
     <color name="colorOnSurface">#000000</color>
+    <color name="orange">#FF6F00</color>
+    <color name="mint_green">#66CDAA</color>
 </resources>

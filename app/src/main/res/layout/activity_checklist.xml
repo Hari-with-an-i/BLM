@@ -16,8 +16,10 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" app:navigationIcon="@drawable/ic_arrow_back_c"
-            app:title="Checklist" />
+            android:layout_height="wrap_content"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="PackIt"
+            android:background="@color/orange" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.cardview.widget.CardView
@@ -39,7 +41,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:padding="16dp"
-            android:background="@android:color/holo_purple">
+            android:background="@android:color/white">
 
             <EditText
                 android:id="@+id/etTitle"
@@ -76,7 +78,7 @@
             android:layout_weight="1"
             android:src="@drawable/ic_add_item"
             android:layout_marginEnd="8dp"
-            android:backgroundTint="@android:color/holo_blue_light"
+            android:backgroundTint="@color/mint_green"
             android:scaleType="centerInside"
             android:contentDescription="Add Item" />
 
@@ -86,7 +88,7 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:src="@drawable/ic_download"
-            android:backgroundTint="#4CAF50"
+            android:backgroundTint="@color/mint_green"
             android:scaleType="centerInside"
             android:contentDescription="Save Image" />
     </LinearLayout>

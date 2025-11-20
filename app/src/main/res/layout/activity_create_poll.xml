@@ -8,7 +8,9 @@
             <EditText android:id="@+id/etOption2" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Option 2" android:layout_marginTop="8dp"/>
         </LinearLayout>
         <!--  Add option button  -->
-        <Button android:id="@+id/btnAddOption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+ Add option" android:layout_marginTop="8dp"/>
-        <Button android:id="@+id/btnCreate" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Create Poll" android:layout_marginTop="12dp"/>
+        <Button android:id="@+id/btnAddOption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+ Add option" android:layout_marginTop="8dp" android:backgroundTint="#FF6F00"
+            />
+        <Button android:id="@+id/btnCreate" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Create Poll" android:layout_marginTop="12dp" android:backgroundTint="#FF6F00"
+            />
     </LinearLayout>
 </ScrollView>

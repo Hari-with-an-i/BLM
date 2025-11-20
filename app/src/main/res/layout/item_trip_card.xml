@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Paris 2026"
-            android:textAppearance="?attr/textAppearanceTitleLarge"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
             android:textStyle="bold" />
 
         <TextView
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Sept 10-17, 2026"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
             android:textColor="?android:attr/textColorSecondary" />
 
         <TextView
@@ -34,8 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Family"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textStyle="bold"
-            android:textColor="?attr/colorSecondary" />
+            android:textAppearance="?attr/textAppearanceTitleSmall"
+            android:textColor="?attr/colorSecondary"
+            android:textStyle="bold" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

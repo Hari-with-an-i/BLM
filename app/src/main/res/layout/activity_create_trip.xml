@@ -27,7 +27,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Trip Title (e.g., Paris 2026)">
+            android:hint="Trip Title">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etTripTitle"
@@ -41,22 +41,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="Date (e.g., Sept 10-17, 2026)">
+            android:hint="Date"
+            app:endIconMode="custom"
+            app:endIconDrawable="@drawable/ic_calendar">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etTripDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"/>
+                android:focusable="false"
+                android:clickable="true"
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Radio Buttons for Solo/Group -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Who is this trip for?"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
 
         <RadioGroup
             android:id="@+id/radioGroupTripType"
@@ -68,7 +64,7 @@
                 android:id="@+id/radioSolo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Just me (Solo Trip)"
+                android:text="Solo Trip"
                 android:checked="true"/>
 
             <RadioButton
@@ -87,12 +83,6 @@
             android:layout_marginTop="16dp"
             android:visibility="gone">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add Collaborators (Optional)"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,18 +100,19 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add another collaborator"/>
+                android:text="Add another collaborator"
+                android:textColor="@android:color/white"
+                />
 
         </LinearLayout>
-        <!-- We'll add a 'Select Group' dropdown here later -->
 
-        <!-- Create Button -->
         <Button
             android:id="@+id/btnCreateTrip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="Create Trip"
+            android:backgroundTint="#FF6F00"
             android:padding="12dp"/>
     </LinearLayout>
 

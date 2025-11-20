@@ -5,12 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_polls"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:title="Polls" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPolls"
         android:layout_width="match_parent"
@@ -25,5 +19,6 @@
         app:srcCompat="@android:drawable/ic_input_add"
         app:layout_anchor="@id/rvPolls"
         app:layout_anchorGravity="bottom|end"
+        app:backgroundTint="@color/mint_green"
         android:layout_margin="16dp"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
