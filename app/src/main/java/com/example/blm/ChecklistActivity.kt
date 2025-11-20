@@ -29,6 +29,7 @@ class ChecklistActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChecklistBinding
     private lateinit var adapter: ChecklistAdapter
     private val checklistItems = mutableListOf<ChecklistItem>(ChecklistItem())
+    private lateinit var tripId: String
 
     // 1. Initialize Firestore and Auth instances
     private val db: FirebaseFirestore = Firebase.firestore
@@ -38,6 +39,12 @@ class ChecklistActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChecklistBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Get Trip ID from intent
+        tripId = intent.getStringExtra(TRIP_ID) ?: ""
+        if (tripId.isBlank()) {
+            throw IllegalStateException("Trip ID cannot be null or blank")
+        }
 
         setupToolbar()
         loadChecklistFromFirestore()
@@ -91,13 +98,12 @@ class ChecklistActivity : AppCompatActivity() {
         val checklistDocument = ChecklistDocument(
             title = title,
             items = actualItems,
-            userId = user.uid
+            userId = user.uid,
+            tripId = tripId
         )
 
         // Save to Firestore under the user's specific subcollection
-        db.collection("checklists")
-            .document(user.uid)
-            .collection("user_lists")
+        db.collection("trips").document(tripId).collection("checklists")
             .add(checklistDocument)
             .addOnSuccessListener {
                 // Only show a Toast for success, but don't hold up the finish() command
@@ -107,57 +113,55 @@ class ChecklistActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error saving list: Check connection.", Toast.LENGTH_LONG).show()
                 Log.e("Firestore", "Error writing document on back press", e)
             }
-         fun loadChecklistFromFirestore() {
-            val user = auth.currentUser
-            if (user == null) {
-                Toast.makeText(this, "Error: Cannot load. User not logged in.", Toast.LENGTH_SHORT).show()
-                return
-            }
-
-            db.collection("checklists")
-                .document(user.uid)
-                .collection("user_lists")
-                // Order by timestamp to get the latest one first
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .limit(1)
-                .get()
-                .addOnSuccessListener { querySnapshot ->
-                    if (querySnapshot.isEmpty) {
-                        // No checklist found: Start fresh with one blank item
-                        Toast.makeText(this, "No saved list found. Starting new.", Toast.LENGTH_SHORT).show()
-                        adapter.addItem()
-                        return@addOnSuccessListener
-                    }
-
-                    // Get the document and convert it to our data class
-                    val document = querySnapshot.documents[0]
-                    val loadedChecklist = document.toObject<ChecklistDocument>()
-
-                    if (loadedChecklist != null) {
-                        // 1. Update the Title
-                        binding.etTitle.setText(loadedChecklist.title)
-
-                        // 2. Update the Checklist Items
-                        checklistItems.clear()
-                        checklistItems.addAll(loadedChecklist.items)
-
-                        // Add one blank item at the end so the user can easily add more
-                        if (loadedChecklist.items.isNotEmpty()) {
-                            checklistItems.add(ChecklistItem())
-                        }
-
-                        // 3. Notify the Adapter to redraw the list with the new data
-                        adapter.notifyDataSetChanged()
-
-                        Toast.makeText(this, "Checklist loaded successfully!", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Error loading checklist.", Toast.LENGTH_LONG).show()
-                    Log.e("Firestore", "Error loading document", e)
-                }
-        }
     }
+//    private fun loadChecklistFromFirestore() {
+//        val user = auth.currentUser
+//        if (user == null) {
+//            Toast.makeText(this, "Error: Cannot load. User not logged in.", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//
+//        db.collection("trips").document(tripId).collection("checklists")
+//            // Order by timestamp to get the latest one first
+//            .orderBy("timestamp", Query.Direction.DESCENDING)
+//            .limit(1)
+//            .get()
+//            .addOnSuccessListener { querySnapshot ->
+//                if (querySnapshot.isEmpty) {
+//                    // No checklist found: Start fresh with one blank item
+//                    Toast.makeText(this, "No saved list found. Starting new.", Toast.LENGTH_SHORT).show()
+//                    adapter.addItem()
+//                    return@addOnSuccessListener
+//                }
+//
+//                // Get the document and convert it to our data class
+//                val document = querySnapshot.documents[0]
+//                val loadedChecklist = document.toObject<ChecklistDocument>()
+//
+//                if (loadedChecklist != null) {
+//                    // 1. Update the Title
+//                    binding.etTitle.setText(loadedChecklist.title)
+//
+//                    // 2. Update the Checklist Items
+//                    checklistItems.clear()
+//                    checklistItems.addAll(loadedChecklist.items)
+//
+//                    // Add one blank item at the end so the user can easily add more
+//                    if (loadedChecklist.items.isNotEmpty()) {
+//                        checklistItems.add(ChecklistItem())
+//                    }
+//
+//                    // 3. Notify the Adapter to redraw the list with the new data
+//                    adapter.notifyDataSetChanged()
+//
+//                    Toast.makeText(this, "Checklist loaded successfully!", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                Toast.makeText(this, "Error loading checklist.", Toast.LENGTH_LONG).show()
+//                Log.e("Firestore", "Error loading document", e)
+//            }
+//    }
 
     private fun loadChecklistFromFirestore() {
         val user = auth.currentUser
@@ -166,9 +170,7 @@ class ChecklistActivity : AppCompatActivity() {
             return
         }
 
-        db.collection("checklists")
-            .document(user.uid)
-            .collection("user_lists")
+        db.collection("trips").document(tripId).collection("checklists")
             // Order by timestamp to get the latest one first
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .limit(1)
@@ -208,6 +210,9 @@ class ChecklistActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error loading checklist.", Toast.LENGTH_LONG).show()
                 Log.e("Firestore", "Error loading document", e)
             }
+    }
+    companion object {
+        const val TRIP_ID = "trip_id"
     }
 
     private fun setupRecyclerView() {

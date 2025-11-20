@@ -21,10 +21,17 @@ class PollCreateActivity : AppCompatActivity() {
     private lateinit var btnCreate: Button
 
     private val MAX_OPTIONS = 6
+    private lateinit var tripId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_poll)
+
+        // Get Trip ID from intent
+        tripId = intent.getStringExtra(PollsActivity.TRIP_ID) ?: ""
+        if (tripId.isBlank()) {
+            throw IllegalStateException("Trip ID cannot be null or blank")
+        }
 
         etTitle = findViewById(R.id.etTitle)
         llOptions = findViewById(R.id.llOptions)
@@ -70,6 +77,7 @@ class PollCreateActivity : AppCompatActivity() {
 
             val intent = Intent().apply {
                 putExtra(PollsActivity.EXTRA_NEW_POLL, poll as java.io.Serializable)
+                putExtra(PollsActivity.TRIP_ID, tripId)
             }
             setResult(Activity.RESULT_OK, intent)
             finish()

@@ -4,5 +4,6 @@ data class ChecklistDocument(
     var title: String = "",
     var items: List<ChecklistItem> = emptyList(),
     val userId: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val tripId: String = "",
+        val timestamp: Long = System.currentTimeMillis()
 )

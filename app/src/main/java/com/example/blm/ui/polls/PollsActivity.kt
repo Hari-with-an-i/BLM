@@ -16,23 +16,30 @@ class PollsActivity : AppCompatActivity() {
 
     private val vm: PollsViewModel by viewModels()
     private lateinit var adapter: PollAdapter
+    private lateinit var tripId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_polls)
 
+        // Get Trip ID from intent
+        tripId = intent.getStringExtra(TRIP_ID) ?: ""
+        if (tripId.isBlank()) {
+            throw IllegalStateException("Trip ID cannot be null or blank")
+        }
+
         // Load saved polls
-        vm.load(this)
+        vm.load(tripId)
 
         // Setup RecyclerView
         val rv = findViewById<RecyclerView>(R.id.rvPolls)
 
         adapter = PollAdapter(
             onVote = { poll, option ->
-                vm.vote(this, poll.id, option.id)
+                vm.vote(tripId, poll.id, option.id)
             },
             onDelete = { poll ->
-                vm.deletePoll(this, poll.id)
+                vm.deletePoll(tripId, poll.id)
             }
         )
 
@@ -43,6 +50,7 @@ class PollsActivity : AppCompatActivity() {
         val fab = findViewById<FloatingActionButton>(R.id.fabCreatePoll)
         fab.setOnClickListener {
             val i = Intent(this, PollCreateActivity::class.java)
+            i.putExtra(TRIP_ID, tripId)
             startActivityForResult(i, REQUEST_CREATE_POLL)
         }
 
@@ -61,13 +69,15 @@ class PollsActivity : AppCompatActivity() {
             data != null
         ) {
             val poll = data.getSerializableExtra(EXTRA_NEW_POLL) as? Poll
-            if (poll != null) {
-                vm.addPoll(this, poll)
+            val tripId = data.getStringExtra(TRIP_ID)
+            if (poll != null && tripId != null) {
+                vm.addPoll(tripId, poll)
             }
         }
     }
 
     companion object {
+        const val TRIP_ID = "EXTRA_TRIP_ID"
         const val REQUEST_CREATE_POLL = 1001
         const val EXTRA_NEW_POLL = "extra_new_poll"
     }

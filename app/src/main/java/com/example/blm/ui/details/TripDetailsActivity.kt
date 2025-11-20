@@ -64,8 +64,8 @@ class TripDetailsActivity : AppCompatActivity() {
     private fun setupHubButtons() {
         // Button 1: Checklist
         binding.btnChecklist.setOnClickListener {
-            // TODO for Teammate 1: Launch ChecklistActivity here
             val intent = Intent(this, ChecklistActivity::class.java)
+            intent.putExtra(ChecklistActivity.TRIP_ID, tripId)
             startActivity(intent)
         }
 
@@ -73,9 +73,12 @@ class TripDetailsActivity : AppCompatActivity() {
         binding.btnPolls.setOnClickListener {
             // Open the Polls screen
             val intent = Intent(this, com.example.blm.ui.polls.PollsActivity::class.java)
-            // optional: pass current trip id so PollsActivity knows which trip it's for
-            tripId?.let { intent.putExtra("EXTRA_TRIP_ID", it) }
-            startActivity(intent)
+            if (tripId != null) {
+                intent.putExtra(com.example.blm.ui.polls.PollsActivity.TRIP_ID, tripId)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Error: Trip ID is null", Toast.LENGTH_SHORT).show()
+            }
         }
 
         // Button 3: Gallery
