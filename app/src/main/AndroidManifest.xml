@@ -41,6 +41,8 @@
         <activity
             android:name=".ui.gallery.GalleryActivity"
             android:exported="false" />
+        <activity android:name=".ui.polls.PollsActivity" />
+        <activity android:name=".ui.polls.PollCreateActivity" />
     </application>
 
 </manifest>

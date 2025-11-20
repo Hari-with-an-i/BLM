@@ -71,8 +71,11 @@ class TripDetailsActivity : AppCompatActivity() {
 
         // Button 2: Polls
         binding.btnPolls.setOnClickListener {
-            // TODO for Teammate 2: Launch PollsActivity here
-            Toast.makeText(this, "Polls feature coming soon!", Toast.LENGTH_SHORT).show()
+            // Open the Polls screen
+            val intent = Intent(this, com.example.blm.ui.polls.PollsActivity::class.java)
+            // optional: pass current trip id so PollsActivity knows which trip it's for
+            tripId?.let { intent.putExtra("EXTRA_TRIP_ID", it) }
+            startActivity(intent)
         }
 
         // Button 3: Gallery

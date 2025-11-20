@@ -1,0 +1,14 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="16dp">
+    <LinearLayout android:id="@+id/rootLayout" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+        <EditText android:id="@+id/etTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Poll title"/>
+        <!--  Options container  -->
+        <LinearLayout android:id="@+id/llOptions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp">
+            <!--  Two default option fields  -->
+            <EditText android:id="@+id/etOption1" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Option 1"/>
+            <EditText android:id="@+id/etOption2" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Option 2" android:layout_marginTop="8dp"/>
+        </LinearLayout>
+        <!--  Add option button  -->
+        <Button android:id="@+id/btnAddOption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+ Add option" android:layout_marginTop="8dp"/>
+        <Button android:id="@+id/btnCreate" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Create Poll" android:layout_marginTop="12dp"/>
+    </LinearLayout>
+</ScrollView>
